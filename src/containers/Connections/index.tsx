@@ -32,7 +32,7 @@ const shouldCenter = new Set<string>([Columns.Network, Columns.Type, Columns.Rul
 interface TableColumn<D extends object = {}> extends
     ColumnInstance<D>,
     UseSortByColumnProps<D>,
-    UseResizeColumnsColumnProps<D> {}
+    UseResizeColumnsColumnProps<D> { }
 
 type TableColumnOption<D extends object = {}> =
     Column<D> &
@@ -42,11 +42,11 @@ type TableColumnOption<D extends object = {}> =
 interface ITableOptions<D extends object = {}> extends
     TableOptions<D>,
     UseSortByOptions<D>,
-    UseFiltersOptions<D> {}
+    UseFiltersOptions<D> { }
 
 interface ITableInstance<D extends object = {}> extends
     TableInstance<D>,
-    UseFiltersInstanceProps<D> {}
+    UseFiltersInstanceProps<D> { }
 
 function formatTraffic(num: number) {
     const s = ['B', 'KB', 'MB', 'GB', 'TB']
@@ -224,7 +224,7 @@ export default function Connections() {
 
     // filter
     const [device, setDevice] = useState('')
-    function handleDeviceSelected (label: string) {
+    function handleDeviceSelected(label: string) {
         setDevice(label)
         setFilter?.(Columns.SourceIP, label)
     }
@@ -238,7 +238,7 @@ export default function Connections() {
                 <Checkbox className="connections-filter" checked={save} onChange={toggleSave}>{t('keepClosed')}</Checkbox>
                 <Icon className="connections-filter dangerous" onClick={show} type="close-all" size={20} />
             </Header>
-            { devices.length > 1 && <Devices devices={devices} selected={device} onChange={handleDeviceSelected} /> }
+            { devices.length > 1 && <Devices devices={devices} selected={device} onChange={handleDeviceSelected} />}
             <Card className="connections-card">
                 <div {...getTableProps()} className="connections" ref={tableRef}>
                     <div {...headerGroup.getHeaderGroupProps()} className="connections-header">

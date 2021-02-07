@@ -73,6 +73,9 @@ export default function Settings () {
     async function handleLogLevelChange (logLevel: string) {
         await updateConfig({ "log-level": logLevel })
         await fetchGeneral()
+        let last = await getLogsStreamReader()
+        last.websocketConnection?.close()
+        last.websocketConnection = null
         await getLogsStreamReader(true)
     }
 

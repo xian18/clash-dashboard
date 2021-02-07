@@ -20,7 +20,10 @@ const EN = {
             httpProxyPort: 'HTTP proxy port',
             mixedProxyPort: 'Mixed proxy port',
             externalController: 'External controller',
-            logLevel: 'Log Level'
+            logLevel: 'Log Level',
+            Speed: 'Speed',
+            Upload: 'Upload Speed',
+            Download: 'Download Speed'
         },
         values: {
             cn: '中文',

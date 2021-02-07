@@ -6,7 +6,10 @@ const CN = {
         Rules: '规则',
         Settings: '设置',
         Connections: '连接',
-        Version: '版本'
+        Version: '版本',
+        Speed: '速度',
+        Upload: '上传速度',
+        Download: '下载速度'
     },
     Settings: {
         title: '设置',
