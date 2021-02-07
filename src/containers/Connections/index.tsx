@@ -182,7 +182,6 @@ export default function Connections() {
         return () => {
             if (streamReader) {
                 streamReader.unsubscribe('data', handleConnection)
-                streamReader.destory()
             }
         }
     }, [feed, setTraffic])

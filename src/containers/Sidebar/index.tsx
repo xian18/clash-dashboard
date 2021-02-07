@@ -9,7 +9,7 @@ import useSWR from 'swr'
 
 import { StreamReader } from '@lib/streamer'
 import * as API from '@lib/request'
-import { useConnections } from '@containers/Connections/store'
+import { useConnections } from './store'
 
 
 interface SidebarProps {
@@ -32,20 +32,6 @@ function formatTraffic(num: number) {
     return `${idx === 0 ? num : num.toFixed(2)} ${s[idx]}`
 }
 
-
-function formatSpeed(upload: number, download: number) {
-    switch (true) {
-        case upload === 0 && download === 0:
-            return '-'
-        case upload !== 0 && download !== 0:
-            return `↑ ${formatTraffic(upload)}/s ↓ ${formatTraffic(download)}/s`
-        case upload !== 0:
-            return `↑ ${formatTraffic(upload)}/s`
-        default:
-            return `↓ ${formatTraffic(download)}/s`
-    }
-}
-
 export default function Sidebar(props: SidebarProps) {
     const { routes } = props
     const { translation } = useI18n()
@@ -54,7 +40,7 @@ export default function Sidebar(props: SidebarProps) {
     const { t } = translation('SideBar')
 
     // connections
-    const { connections, feed, save, toggleSave } = useConnections()
+    const { connections, feed } = useConnections()
 
     useSWR('version', update)
 
@@ -69,10 +55,13 @@ export default function Sidebar(props: SidebarProps) {
     const speed = React.useMemo(() => connections.map(c => ({
         upload: c.uploadSpeed,
         download: c.downloadSpeed
-    })).reduce((prev, cur) => ({
-        upload: prev.upload + cur.upload,
-        download: prev.download + cur.download
-    }), { upload: 0, download: 0 }), [connections])
+    })).reduce((prev, cur) => {
+        console.log(prev.upload, prev.download)
+        return ({
+            upload: prev.upload + cur.upload,
+            download: prev.download + cur.download
+        })
+    }, { upload: 0, download: 0 }), [feed, connections])
 
     React.useLayoutEffect(() => {
         let streamReader: StreamReader<API.Snapshot> | null = null
@@ -91,11 +80,9 @@ export default function Sidebar(props: SidebarProps) {
         return () => {
             if (streamReader) {
                 streamReader.unsubscribe('data', handleConnection)
-                streamReader.destory()
             }
         }
     }, [])
-
 
 
     return (
