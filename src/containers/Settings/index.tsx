@@ -3,7 +3,7 @@ import classnames from 'classnames'
 import { capitalize } from 'lodash-es'
 import { Header, Card, Row, Col, Switch, ButtonSelect, ButtonSelectOptions, Input, Icon } from '@components'
 import { useI18n, useClashXData, useAPIInfo, useGeneral, useIdentity, useVersion } from '@stores'
-import { updateConfig } from '@lib/request'
+import { getLogsStreamReader, updateConfig } from '@lib/request'
 import { useObject } from '@lib/hook'
 import { jsBridge } from '@lib/jsBridge'
 import { Lang } from '@i18n'
@@ -70,12 +70,19 @@ export default function Settings () {
         await fetchGeneral()
     }
 
+    async function handleLogLevelChange (logLevel: string) {
+        await updateConfig({ "log-level": logLevel })
+        await fetchGeneral()
+        await getLogsStreamReader(true)
+    }
+
     const {
+        protocol: externalControllerProtocol,
         hostname: externalControllerHost,
         port: externalControllerPort
     } = apiInfo
 
-    const { allowLan, mode } = general
+    const { allowLan, mode, logLevel } = general
 
     const startAtLogin = clashXData?.startAtLogin ?? false
     const systemProxy = clashXData?.systemProxy ?? false
@@ -92,6 +99,14 @@ export default function Settings () {
         }
         return options
     }, [t, premium])
+
+    const logLevelOptions = useMemo(() => [
+        { label: t('values.info'), value: 'info' },
+        { label: t('values.warning'), value: 'warning' },
+        { label: t('values.error'), value: 'error' },
+        { label: t('values.debug'), value: 'debug' },
+        { label: t('values.silent'), value: 'silent' },
+    ], [t])
 
     return (
         <div className="page">
@@ -207,8 +222,20 @@ export default function Settings () {
                             <span
                                 className={classnames({ 'modify-btn': !isClashX })}
                                 onClick={() => !isClashX && setIdentity(false)}>
-                                {`${externalControllerHost}:${externalControllerPort}`}
+                                {`${externalControllerProtocol}://${externalControllerHost}:${externalControllerPort}`}
                             </span>
+                        </Col>
+                    </Col>
+                    <Col span={12}>
+                        <Col span={8} offset={1}>
+                            <span className="label">{t('labels.logLevel')}</span>
+                        </Col>
+                        <Col span={14} className="value-column">
+                            <ButtonSelect
+                                options={logLevelOptions}
+                                value={String(logLevel)}
+                                onSelect={handleLogLevelChange}
+                            />
                         </Col>
                     </Col>
                 </Row>

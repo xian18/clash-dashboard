@@ -18,10 +18,10 @@ const identity = atom({
 
 type AsyncFunction<A, O> = (...args: A[]) => Promise<O>
 
-export function useIdentity () {
+export function useIdentity() {
     const [id, set] = useRecoilState(identity)
 
-    function wrapFetcher<A, O> (fn: AsyncFunction<A, O>) {
+    function wrapFetcher<A, O>(fn: AsyncFunction<A, O>) {
         return async function (...args: A[]) {
             const [resp, err] = await to(fn(...args))
             const rErr = err as AxiosError
@@ -42,17 +42,17 @@ const language = atom({
     default: getLanguage()
 })
 
-export function useI18n () {
+export function useI18n() {
     const [lang, set] = useRecoilState(language)
 
-    function setLang (lang: Lang) {
+    function setLang(lang: Lang) {
         set(lang)
         setLanguage(lang)
     }
 
     const translation = useCallback(
         function (namespace: keyof typeof Language['en_US']) {
-            function t (path: string) {
+            function t(path: string) {
                 return get(Language[lang][namespace], path) as string
             }
             return { t }
@@ -71,11 +71,11 @@ export const version = atom({
     }
 })
 
-export function useVersion () {
+export function useVersion() {
     const [data, set] = useRecoilState(version)
     const { set: setIdentity } = useIdentity()
 
-    async function update () {
+    async function update() {
         const [resp, err] = await to(API.getVersion())
         setIdentity(!err)
 
@@ -96,7 +96,7 @@ export const config = atom({
     }
 })
 
-export function useConfig () {
+export function useConfig() {
     const [data, set] = useRecoilObjectWithImmer(config)
 
     return { data, set }
@@ -107,7 +107,7 @@ export const proxyProvider = atom({
     default: [] as API.Provider[]
 })
 
-export function useProxyProviders () {
+export function useProxyProviders() {
     const [providers, set] = useRecoilState(proxyProvider)
 
     const { data, mutate } = swr('/providers/proxy', async () => {
@@ -123,7 +123,7 @@ export function useProxyProviders () {
     return { providers, update: mutate }
 }
 
-export function useRuleProviders () {
+export function useRuleProviders() {
     const [{ premium }] = useRecoilState(version)
 
     const { data, mutate } = swr('/providers/rule', async () => {
@@ -140,7 +140,7 @@ export function useRuleProviders () {
     return { providers: data ?? [], update: mutate }
 }
 
-export function useGeneral () {
+export function useGeneral() {
     const { data, mutate } = swr('/config', async () => {
         const resp = await API.getConfig()
         const data = resp.data
@@ -173,7 +173,7 @@ export const proxies = atom({
     }
 })
 
-export function useProxy () {
+export function useProxy() {
     const [allProxy, set] = useRecoilObjectWithImmer(proxies)
 
     const { mutate } = swr('/proxies', async () => {
@@ -193,6 +193,9 @@ export function useProxy () {
     })
 
     const markProxySelected = useCallback((name: string, selected: string) => {
+        if (name === "GLOBAL") {
+            set(draft => { draft.global.now = selected })
+        }
         set(draft => {
             for (const group of draft.groups) {
                 if (group.name === name) {
@@ -232,7 +235,7 @@ export const proxyMapping = selector({
     }
 })
 
-export function useClashXData () {
+export function useClashXData() {
     const { data, mutate } = swr('/clashx', async () => {
         if (!isClashX()) {
             return {
@@ -254,25 +257,27 @@ export function useClashXData () {
 export const apiData = atom({
     key: 'apiData',
     default: {
+        protocol: 'http',
         hostname: '127.0.0.1',
         port: '9090',
         secret: ''
     }
 })
 
-export function useAPIInfo () {
+export function useAPIInfo() {
     const [data, set] = useRecoilState(apiData)
 
-    const fetch = useCallback(async function fetch () {
+    const fetch = useCallback(async function fetch() {
         const info = await API.getExternalControllerConfig()
         set({ ...info })
     }, [set])
 
-    async function update (info: typeof data) {
-        const { hostname, port, secret } = info
+    async function update(info: typeof data) {
+        const { protocol, hostname, port, secret } = info
         setLocalStorageItem('externalControllerAddr', hostname)
         setLocalStorageItem('externalControllerPort', port)
         setLocalStorageItem('secret', secret)
+        setLocalStorageItem('protocol', protocol)
         window.location.reload()
     }
 
@@ -284,10 +289,10 @@ export const rules = atom({
     default: [] as API.Rule[]
 })
 
-export function useRule () {
+export function useRule() {
     const [data, set] = useRecoilObjectWithImmer(rules)
 
-    async function update () {
+    async function update() {
         const resp = await API.getRules()
         set(resp.data.rules)
     }

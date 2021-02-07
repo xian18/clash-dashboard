@@ -1,8 +1,8 @@
-export function createAsyncSingleton<T> (fn: () => Promise<T>): () => Promise<T> {
+export function createAsyncSingleton<T>(fn: () => Promise<T>): (reCreate?: Boolean) => Promise<T> {
     let promise: Promise<T> | null = null
 
-    return async function () {
-        if (promise) {
+    return async function (reCreate = false) {
+        if (promise && !reCreate) {
             return promise
         }
         promise = fn()

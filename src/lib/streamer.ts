@@ -15,6 +15,7 @@ export class StreamReader<T> {
     protected config: SetRequired<Config, 'bufferLength' | 'retryInterval'>
     protected innerBuffer: T[] = []
     protected isClose = false
+    protected websocketConnection: WebSocket | null = null
 
     constructor (config: Config) {
         this.config = Object.assign(
@@ -53,6 +54,8 @@ export class StreamReader<T> {
             this.EE.emit('error', err)
             setTimeout(this.websocketLoop, this.config.retryInterval)
         })
+
+        this.websocketConnection = connection
     }
 
     protected async loop () {
@@ -115,5 +118,7 @@ export class StreamReader<T> {
     destory () {
         this.EE.removeAllListeners()
         this.isClose = true
+        this.websocketConnection?.close()
+        this.websocketConnection = null
     }
 }

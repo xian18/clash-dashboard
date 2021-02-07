@@ -5,7 +5,7 @@
 
 @font-face {
     font-family: "clash-iconfont";
-    src: url('//at.alicdn.com/t/font_841708_ok9czskbhel.ttf?t=1576162884356') format('truetype');
+    src: url("../assets/font_841708_ok9czskbhel.ttf") format("truetype");
 }
 
 .clash-iconfont {
@@ -17,42 +17,82 @@
     color: $color-primary-dark;
 }
 
-.icon-update::before { content: "\e66f"; }
+.icon-update::before {
+    content: "\e66f";
+}
 
-.icon-healthcheck::before { content: "\e63c"; }
+.icon-healthcheck::before {
+    content: "\e63c";
+}
 
-.icon-speed::before { content: "\e61b"; }
+.icon-speed::before {
+    content: "\e61b";
+}
 
-.icon-close::before { content: "\e602"; }
+.icon-close::before {
+    content: "\e602";
+}
 
-.icon-drag::before { content: "\e604"; }
+.icon-drag::before {
+    content: "\e604";
+}
 
-.icon-down-arrow-o::before { content: "\e605"; }
+.icon-down-arrow-o::before {
+    content: "\e605";
+}
 
-.icon-check::before { content: "\e606"; }
+.icon-check::before {
+    content: "\e606";
+}
 
-.icon-plus::before { content: "\e607"; }
+.icon-plus::before {
+    content: "\e607";
+}
 
-.icon-triangle-up::before { content: "\e608"; }
+.icon-triangle-up::before {
+    content: "\e608";
+}
 
-.icon-triangle-down::before { content: "\e609"; }
+.icon-triangle-down::before {
+    content: "\e609";
+}
 
-.icon-up-arrow-o::before { content: "\e60a"; }
+.icon-up-arrow-o::before {
+    content: "\e60a";
+}
 
-.icon-info::before { content: "\e60b"; }
+.icon-info::before {
+    content: "\e60b";
+}
 
-.icon-info-o::before { content: "\e60c"; }
+.icon-info-o::before {
+    content: "\e60c";
+}
 
-.icon-setting::before { content: "\e60d"; }
+.icon-setting::before {
+    content: "\e60d";
+}
 
-.icon-show::before { content: "\e60e"; }
+.icon-show::before {
+    content: "\e60e";
+}
 
-.icon-hide::before { content: "\e60f"; }
+.icon-hide::before {
+    content: "\e60f";
+}
 
-.icon-sort::before { content: "\e8b3"; }
+.icon-sort::before {
+    content: "\e8b3";
+}
 
-.icon-sort-descending::before { content: "\e8b4"; }
+.icon-sort-descending::before {
+    content: "\e8b4";
+}
 
-.icon-sort-ascending::before { content: "\e8b5"; }
+.icon-sort-ascending::before {
+    content: "\e8b5";
+}
 
-.icon-close-all::before { content: "\e71b"; }
+.icon-close-all::before {
+    content: "\e71b";
+}

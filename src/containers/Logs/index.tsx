@@ -1,6 +1,6 @@
 import React, { useLayoutEffect, useEffect, useRef, useState } from 'react'
 import dayjs from 'dayjs'
-import { useI18n } from '@stores'
+import { useConfig, useGeneral, useI18n } from '@stores'
 import { Card, Header } from '@components'
 import { getLogsStreamReader } from '@lib/request'
 import { StreamReader } from '@lib/streamer'
@@ -36,9 +36,8 @@ export default function Logs () {
             streamReader.subscribe('data', handleLog)
         }())
 
-        return () => streamReader?.unsubscribe('data', handleLog)
+        return () => { streamReader?.unsubscribe('data', handleLog); streamReader?.destory(); }
     }, [])
-
     return (
         <div className="page">
             <Header title={ t('title') } />

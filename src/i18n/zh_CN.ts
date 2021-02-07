@@ -19,7 +19,8 @@ const CN = {
             socks5ProxyPort: 'Socks5 代理端口',
             httpProxyPort: 'HTTP 代理端口',
             mixedProxyPort: '混合代理端口',
-            externalController: '外部控制设置'
+            externalController: '外部控制设置',
+            logLevel: '日志级别'
         },
         values: {
             cn: '中文',
@@ -27,13 +28,19 @@ const CN = {
             global: '全局',
             rules: '规则',
             direct: '直连',
-            script: '脚本'
+            script: '脚本',
+            info: '信息',
+            warning: '警告',
+            error: '错误',
+            debug: '调试',
+            silent:'安静'
         },
         versionString: '当前 ClashX 已是最新版本：{{version}}',
         checkUpdate: '检查更新',
         externalControllerSetting: {
             title: '编辑外部控制设置',
             note: '请注意，修改该配置项并不会修改你的 Clash 配置文件，请确认修改后的外部控制地址和 Clash 配置文件内的地址一致，否则会导致 Dashboard 无法连接。',
+            protocol: 'Protocol',
             host: 'Host',
             port: '端口',
             secret: '密钥'

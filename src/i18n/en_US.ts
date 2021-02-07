@@ -19,7 +19,8 @@ const EN = {
             socks5ProxyPort: 'Socks5 proxy port',
             httpProxyPort: 'HTTP proxy port',
             mixedProxyPort: 'Mixed proxy port',
-            externalController: 'External controller'
+            externalController: 'External controller',
+            logLevel: 'Log Level'
         },
         values: {
             cn: '中文',
@@ -27,13 +28,19 @@ const EN = {
             global: 'Global',
             rules: 'Rules',
             direct: 'Direct',
-            script: 'Script'
+            script: 'Script',
+            info: 'Info',
+            warning: 'Warn',
+            error: 'Error',
+            debug: 'Debug',
+            silent: 'Silent'
         },
         versionString: 'Current ClashX is the latest version：{{version}}',
         checkUpdate: 'Check Update',
         externalControllerSetting: {
             title: 'External Controller',
             note: 'Please note that modifying this configuration will only configure Dashboard. Will not modify your Clash configuration file. Please make sure that the external controller address matches the address in the Clash configuration file, otherwise, Dashboard will not be able to connect to Clash.',
+            protocol: 'Protocol',
             host: 'Host',
             port: 'Port',
             secret: 'Secret'

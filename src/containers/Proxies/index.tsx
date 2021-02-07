@@ -34,7 +34,7 @@ function ProxyGroups () {
     const { t } = translation('Proxies')
 
     const list = useMemo(
-        () => general.mode === 'global' ? [global] : groups,
+        () => general.mode === 'global' ? [global, ...groups] : groups,
         [general, groups, global]
     )
 
