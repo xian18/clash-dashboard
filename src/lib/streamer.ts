@@ -105,7 +105,6 @@ export class StreamReader<T> {
 
     subscribe (event: string, callback: (data: T[]) => void) {
         this.EE.addListener(event, callback)
-        console.log(this.EE.listenerCount(event))
     }
 
     unsubscribe (event: string, callback: (data: T[]) => void) {

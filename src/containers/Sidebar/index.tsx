@@ -56,7 +56,6 @@ export default function Sidebar(props: SidebarProps) {
         upload: c.uploadSpeed,
         download: c.downloadSpeed
     })).reduce((prev, cur) => {
-        console.log(prev.upload, prev.download)
         return ({
             upload: prev.upload + cur.upload,
             download: prev.download + cur.download

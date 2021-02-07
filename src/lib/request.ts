@@ -123,7 +123,6 @@ export async function getExternalControllerConfig () {
 }
 
 export const getInstance = createAsyncSingleton(async () => {
-    console.log("get instance")
     const {
         hostname,
         port,
@@ -247,7 +246,6 @@ export const getLogsStreamReader = createAsyncSingleton(async function () {
     const useWebsocket = !!version || true
 
     const logUrl = `${externalController.protocol}://${externalController.hostname}:${externalController.port}/logs?level=${config['log-level']}`
-    console.log(logUrl)
     return new StreamReader<Log>({ url: logUrl, bufferLength: 200, token: externalController.secret, useWebsocket })
 })
 
