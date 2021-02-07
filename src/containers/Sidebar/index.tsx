@@ -9,7 +9,8 @@ import useSWR from 'swr'
 
 import { StreamReader } from '@lib/streamer'
 import * as API from '@lib/request'
-import { useConnections } from './store'
+import { useObject } from '@lib/hook'
+import { SideBarSpeed, formatTraffic } from './store'
 
 
 interface SidebarProps {
@@ -21,16 +22,7 @@ interface SidebarProps {
     }[]
 }
 
-function formatTraffic(num: number) {
-    const s = ['B', 'KB', 'MB', 'GB', 'TB']
-    let idx = 0
-    while (~~(num / 1024) && idx < s.length) {
-        num /= 1024
-        idx++
-    }
 
-    return `${idx === 0 ? num : num.toFixed(2)} ${s[idx]}`
-}
 
 export default function Sidebar(props: SidebarProps) {
     const { routes } = props
@@ -40,7 +32,8 @@ export default function Sidebar(props: SidebarProps) {
     const { t } = translation('SideBar')
 
     // connections
-    const { connections, feed } = useConnections()
+    const [connection, setConnection] = useObject({ uploadTotal: 0, downloadTotal: 0, uploadSpeed: 0, downloadSpeed: 0 })
+    const speedStore = React.useMemo(() => new SideBarSpeed(), [])
 
     useSWR('version', update)
 
@@ -52,23 +45,16 @@ export default function Sidebar(props: SidebarProps) {
         )
     )
 
-    const speed = React.useMemo(() => connections.map(c => ({
-        upload: c.uploadSpeed,
-        download: c.downloadSpeed
-    })).reduce((prev, cur) => {
-        return ({
-            upload: prev.upload + cur.upload,
-            download: prev.download + cur.download
-        })
-    }, { upload: 0, download: 0 }), [feed, connections])
+    const speed = React.useMemo(() => speedStore.getSpeed(), [connection, setConnection])
 
     React.useLayoutEffect(() => {
         let streamReader: StreamReader<API.Snapshot> | null = null
 
         function handleConnection(snapshots: API.Snapshot[]) {
             for (const snapshot of snapshots) {
-                feed(snapshot.connections)
+                speedStore.storeConnection(snapshot)
             }
+            setConnection(speedStore.getAll())
         }
 
         (async function () {
@@ -92,8 +78,8 @@ export default function Sidebar(props: SidebarProps) {
             </ul>
             <div className="sidebar-speed">
                 <span className="sidebar-speed-label">{t('Speed')}</span>
-                <span className="sidebar-speed-text">{`↑ ${formatTraffic(speed.upload)}/s`}</span>
-                <span className="sidebar-speed-text">{`↓ ${formatTraffic(speed.download)}/s`}</span>
+                <span className="sidebar-speed-text">{`↑ ${formatTraffic(speed.uploadSpeed)}/s`}</span>
+                <span className="sidebar-speed-text">{`↓ ${formatTraffic(speed.downloadSpeed)}/s`}</span>
             </div>
             <div className="sidebar-version">
                 <span className="sidebar-version-label">Clash{data?.isClashX && 'X'} {t('Version')}</span>

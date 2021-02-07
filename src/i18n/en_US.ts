@@ -6,7 +6,8 @@ const EN = {
         Rules: 'Rules',
         Settings: 'Setting',
         Connections: 'Connections',
-        Version: 'Version'
+        Version: 'Version',
+        Speed: 'Network Speed'
     },
     Settings: {
         title: 'Settings',

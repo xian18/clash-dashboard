@@ -1,49 +1,32 @@
 import * as API from '@lib/request'
-import { useState, useMemo, useCallback, useRef } from 'react'
 
-export type Connection = API.Connections & { completed?: boolean, uploadSpeed: number, downloadSpeed: number }
+export class SideBarSpeed {
+    protected connection = { uploadTotal: 0, downloadTotal: 0, uploadSpeed: 0, downloadSpeed: 0 }
 
-class SideStore {
-    protected connections = new Map<string, Connection>()
-
-    appendToSet(connections: API.Connections[]) {
-        const mapping = connections.reduce(
-            (map, c) => map.set(c.id, c), new Map<string, API.Connections>()
-        )
-        for (const id of this.connections.keys()) {
-            if (!mapping.has(id)) {
-                this.connections.delete(id)
-            }
-        }
-        for (const id of mapping.keys()) {
-            if (!this.connections.has(id)) {
-                this.connections.set(id, { ...mapping.get(id)!, uploadSpeed: 0, downloadSpeed: 0 })
-                continue
-            }
-
-            const c = this.connections.get(id)!
-            const n = mapping.get(id)!
-            this.connections?.set(id, { ...n, uploadSpeed: n.upload - c.upload, downloadSpeed: n.download - c.download })
-        }
+    storeConnection({ uploadTotal, downloadTotal }: API.Snapshot) {
+        this.connection.uploadSpeed = uploadTotal - this.connection.uploadTotal
+        this.connection.uploadTotal = uploadTotal
+        this.connection.downloadSpeed = downloadTotal - this.connection.downloadTotal
+        this.connection.downloadTotal = downloadTotal
     }
 
+    getSpeed() {
+        return { uploadSpeed: this.connection.uploadSpeed, downloadSpeed: this.connection.downloadSpeed }
+    }
 
-    getConnections() {
-        return [...this.connections.values()]
+    getAll() {
+        // console.log(this.connection)
+        return this.connection
     }
 }
 
-export function useConnections() {
-    const store = useMemo(() => new SideStore(), [])
-    const [connections, setConnections] = useState<Connection[]>([])
-    // const shouldFlush = useRef(true)
+export function formatTraffic(num: number) {
+    const s = ['B', 'KB', 'MB', 'GB', 'TB']
+    let idx = 0
+    while (~~(num / 1024) && idx < s.length) {
+        num /= 1024
+        idx++
+    }
 
-    const feed = useCallback(function (connections: API.Connections[]) {
-        store.appendToSet(connections)
-        // if(shouldFlush.current)
-        setConnections(store.getConnections())
-        // shouldFlush.current=!shouldFlush.current
-    }, [store])
-
-    return { connections, feed }
+    return `${idx === 0 ? num : num.toFixed(2)} ${s[idx]}`
 }

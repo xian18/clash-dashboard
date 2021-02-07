@@ -7,7 +7,7 @@ const CN = {
         Settings: '设置',
         Connections: '连接',
         Version: '版本',
-        Speed: '速度',
+        Speed: '网络速度',
         Upload: '上传速度',
         Download: '下载速度'
     },
