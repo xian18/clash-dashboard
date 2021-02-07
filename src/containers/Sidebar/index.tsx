@@ -106,8 +106,8 @@ export default function Sidebar(props: SidebarProps) {
             </ul>
             <div className="sidebar-speed">
                 <span className="sidebar-speed-label">{t('Speed')}</span>
-                <span className=".sidebar-speed-text">{`↑ ${formatTraffic(speed.upload)}/s`}</span>
-                <span className=".sidebar-speed-text">{`↓ ${formatTraffic(speed.download)}/s`}</span>
+                <span className="sidebar-speed-text">{`↑ ${formatTraffic(speed.upload)}/s`}</span>
+                <span className="sidebar-speed-text">{`↓ ${formatTraffic(speed.download)}/s`}</span>
             </div>
             <div className="sidebar-version">
                 <span className="sidebar-version-label">Clash{data?.isClashX && 'X'} {t('Version')}</span>

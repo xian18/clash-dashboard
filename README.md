@@ -56,8 +56,7 @@ yarn build
 1. build the project
 
 ```bash
-yarn build
-cp ext_resource/* dist/
+yarn build && cp ext_resource/* dist/
 ```
 
 2. open chrome://extensions
