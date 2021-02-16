@@ -1,6 +1,6 @@
 import React, { useLayoutEffect, useEffect, useRef, useState } from 'react'
 import dayjs from 'dayjs'
-import { useConfig, useGeneral, useI18n } from '@stores'
+import { useI18n } from '@stores'
 import { Card, Header } from '@components'
 import { getLogsStreamReader } from '@lib/request'
 import { StreamReader } from '@lib/streamer'
