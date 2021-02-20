@@ -1,6 +1,10 @@
 name: Deploy
 
-on: [push]
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
 
 jobs:
   build:
@@ -23,15 +27,23 @@ jobs:
         key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
         restore-keys: |
           ${{ runner.os }}-yarn-
-    - name: Install package
+    - name: Install package && build
       run: |
         yarn
         yarn build
-    - name: Deploy
-      uses: crazy-max/ghaction-github-pages@v2
+        cp ext_resource/* dist/
+    - name: Archive Release
+      uses: thedoctor0/zip-release@master
       with:
-        target_branch: gh-pages
-        build_dir: dist
-        fqdn: clash.razord.top
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        filename: 'clash-dashboard.zip'
+        path: './*'
+        directory: 'dist/'
+    - name: release
+      uses: "marvinpinto/action-automatic-releases@latest"
+      with:
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        automatic_release_tag: "latest"
+        prerelease: true
+        title: "auto build for chrome extension"
+        files: |
+          dist/clash-dashboard.zip
