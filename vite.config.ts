@@ -1,23 +1,15 @@
 import reactRefresh from '@vitejs/plugin-react-refresh'
 import tsConfigPath from 'vite-tsconfig-paths'
+import windiCSS from 'vite-plugin-windicss'
 import { defineConfig } from 'vite'
 
 export default defineConfig({
     plugins: [
-        reactRefresh({
-            parserPlugins: [
-                'classProperties',
-            ]
-        }),
-        tsConfigPath()
+        reactRefresh(),
+        tsConfigPath(),
+        windiCSS()
     ],
     base: './',
-    optimizeDeps: {
-        include: [
-            "dayjs/plugin/relativeTime",
-            "dayjs/locale/zh-cn"
-        ]
-    },
     css: {
         preprocessorOptions: {
             scss: {

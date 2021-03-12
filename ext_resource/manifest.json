@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
   
-    "name": "ClashDashBoard",
+    "name": "ClashDashboard",
     "description": "https://github.com/Dreamacro/clash-dashboard",
     "version": "0.0.1",
     "background": {
