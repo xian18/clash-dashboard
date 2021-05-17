@@ -98,7 +98,7 @@ export interface Connections {
     rulePayload: string
 }
 
-export async function getExternalControllerConfig () {
+export async function getExternalControllerConfig() {
     if (isClashX()) {
         const info = await jsBridge!.getAPIInfo()
 
@@ -110,10 +110,19 @@ export async function getExternalControllerConfig () {
         }
     }
 
-    const hostname = getLocalStorageItem('externalControllerAddr', '127.0.0.1')
-    const port = getLocalStorageItem('externalControllerPort', '9090')
-    const secret = getLocalStorageItem('secret', '')
-    const protocol = hostname === '127.0.0.1' ? 'http' : getLocalStorageItem('procotol', 'http')
+    let url: URL | undefined;
+    {
+        const meta = document.querySelector<HTMLMetaElement>('meta[name="external-controller"]')
+        if (meta?.content?.match(/^https?:/)) {
+            // [protocol]://[secret]@[hostname]:[port]
+            url = new URL(meta.content)
+        }
+    }
+
+    const hostname = getLocalStorageItem('externalControllerAddr', url?.hostname ?? '127.0.0.1')
+    const port = getLocalStorageItem('externalControllerPort', url?.port ?? '9090')
+    const secret = getLocalStorageItem('secret', url?.username ?? '')
+    const protocol = hostname === '127.0.0.1' ? 'http:' : getLocalStorageItem('protocol', (url?.protocol ?? window.location.protocol))
 
     if (!hostname || !port) {
         throw new Error('can\'t get hostname or port')
@@ -136,30 +145,30 @@ export const getInstance = createAsyncSingleton(async () => {
     })
 })
 
-export async function getConfig () {
+export async function getConfig() {
     const req = await getInstance()
     return req.get<Config>('configs')
 }
 
-export async function updateConfig (config: Partial<Config>) {
+export async function updateConfig(config: Partial<Config>) {
     const req = await getInstance()
     return req.patch<void>('configs', config)
 }
 
-export async function getRules () {
+export async function getRules() {
     const req = await getInstance()
     return req.get<Rules>('rules')
 }
 
-export async function updateRules () {
+export async function updateRules() {
     const req = await getInstance()
     return req.put<void>('rules')
 }
 
-export async function getProxyProviders () {
+export async function getProxyProviders() {
     const req = await getInstance()
     return req.get<ProxyProviders>('providers/proxies', {
-        validateStatus (status) {
+        validateStatus(status) {
             // compatible old version
             return (status >= 200 && status < 300) || status === 404
         }
@@ -173,42 +182,42 @@ export async function getProxyProviders () {
         })
 }
 
-export async function getRuleProviders () {
+export async function getRuleProviders() {
     const req = await getInstance()
     return req.get<RuleProviders>('providers/rules')
 }
 
-export async function updateProvider (name: string) {
+export async function updateProvider(name: string) {
     const req = await getInstance()
     return req.put<void>(`providers/proxies/${encodeURIComponent(name)}`)
 }
 
-export async function updateRuleProvider (name: string) {
+export async function updateRuleProvider(name: string) {
     const req = await getInstance()
     return req.put<void>(`providers/rules/${encodeURIComponent(name)}`)
 }
 
-export async function healthCheckProvider (name: string) {
+export async function healthCheckProvider(name: string) {
     const req = await getInstance()
     return req.get<void>(`providers/proxies/${encodeURIComponent(name)}/healthcheck`)
 }
 
-export async function getProxies () {
+export async function getProxies() {
     const req = await getInstance()
     return req.get<Proxies>('proxies')
 }
 
-export async function getProxy (name: string) {
+export async function getProxy(name: string) {
     const req = await getInstance()
     return req.get<Proxy>(`proxies/${encodeURIComponent(name)}`)
 }
 
-export async function getVersion () {
+export async function getVersion() {
     const req = await getInstance()
     return req.get<{ version: string, premium?: boolean }>('version')
 }
 
-export async function getProxyDelay (name: string) {
+export async function getProxyDelay(name: string) {
     const req = await getInstance()
     return req.get<{ delay: number }>(`proxies/${encodeURIComponent(name)}/delay`, {
         params: {
@@ -218,22 +227,22 @@ export async function getProxyDelay (name: string) {
     })
 }
 
-export async function closeAllConnections () {
+export async function closeAllConnections() {
     const req = await getInstance()
     return req.delete('connections')
 }
 
-export async function closeConnection (id: string) {
+export async function closeConnection(id: string) {
     const req = await getInstance()
     return req.delete(`connections/${id}`)
 }
 
-export async function getConnections () {
+export async function getConnections() {
     const req = await getInstance()
     return req.get<Snapshot>('connections')
 }
 
-export async function changeProxySelected (name: string, select: string) {
+export async function changeProxySelected(name: string, select: string) {
     const req = await getInstance()
     return req.put<void>(`proxies/${encodeURIComponent(name)}`, { name: select })
 }
