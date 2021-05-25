@@ -41,7 +41,7 @@ export default function ExternalController() {
                 <p>{t('externalControllerSetting.note')}</p>
             </Alert>
             <div className="flex items-center">
-                <span className="title w-14">{t('externalControllerSetting.protocol')}</span>
+                <span className="md:my-3 w-14 my-1 font-bold">{t('externalControllerSetting.protocol')}</span>
                 <Input
                     align="left"
                     inside={true}
@@ -50,9 +50,11 @@ export default function ExternalController() {
                 />
             </div>
             <div className="flex items-center">
-                <span className="title w-14">{t('externalControllerSetting.host')}</span>
+
+                <span className="md:my-3 w-14 my-1 font-bold">{t('externalControllerSetting.host')}</span>
+
                 <Input
-                    className="form flex-1"
+                    className="md:my-3 flex-1 my-1"
                     align="left"
                     inside={true}
                     value={value.hostname}
@@ -60,9 +62,9 @@ export default function ExternalController() {
                 />
             </div>
             <div className="flex items-center">
-                <div className="title w-14">{t('externalControllerSetting.port')}</div>
+                <div className="md:my-3 w-14 my-1 font-bold">{t('externalControllerSetting.port')}</div>
                 <Input
-                    className="form flex-1"
+                    className="md:my-3 w-14 my-1 flex-1"
                     align="left"
                     inside={true}
                     value={value.port}
@@ -70,15 +72,15 @@ export default function ExternalController() {
                 />
             </div>
             <div className="flex items-center">
-                <div className="title w-14">{t('externalControllerSetting.secret')}</div>
+                <div className="md:my-3 w-14 my-1 font-bold">{t('externalControllerSetting.secret')}</div>
                 <Input
-                    className="form flex-1"
+                    className="md:my-3 w-14 my-1 flex-1"
                     align="left"
                     inside={true}
                     value={value.secret}
                     onChange={secret => set('secret', secret)}
                 />
             </div>
-        </Modal>
+        </Modal >
     )
 }
