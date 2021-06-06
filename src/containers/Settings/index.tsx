@@ -205,13 +205,13 @@ export default function Settings() {
                 </div>
 
             </Card>
-            <Card className="clash-version hidden">
+            {/* <Card className="clash-version hidden">
                 <span className="check-icon">
                     <Icon type="check" size={20} />
                 </span>
                 <p className="version-info">{t('versionString')}</p>
                 <span className="check-update-btn">{t('checkUpdate')}</span>
-            </Card>
-        </div >
+            </Card> */}
+        </div>
     )
 }
