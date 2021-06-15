@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { getLocalStorageItem, to } from '@lib/helper'
+import { getLocalStorageItem, getSearchParam, to } from '@lib/helper'
 import { isClashX, jsBridge } from '@lib/jsBridge'
 import { createAsyncSingleton } from '@lib/asyncSingleton'
 import { Log } from '@models/Log'
@@ -106,7 +106,7 @@ export async function getExternalControllerConfig() {
             hostname: info.host,
             port: info.port,
             secret: info.secret,
-            protocol: 'http'
+            protocol: 'http:'
         }
     }
 
@@ -119,10 +119,10 @@ export async function getExternalControllerConfig() {
         }
     }
 
-    const hostname = getLocalStorageItem('externalControllerAddr', url?.hostname ?? '127.0.0.1')
-    const port = getLocalStorageItem('externalControllerPort', url?.port ?? '9090')
-    const secret = getLocalStorageItem('secret', url?.username ?? '')
-    const protocol = hostname === '127.0.0.1' ? 'http' : getLocalStorageItem('protocol', (url?.protocol.slice(0, -1) ?? window.location.protocol.slice(0, -1)))
+    const hostname = getSearchParam('host') ?? getLocalStorageItem('externalControllerAddr', url?.hostname ?? '127.0.0.1')
+    const port = getSearchParam('port') ?? getLocalStorageItem('externalControllerPort', url?.port ?? '9090')
+    const secret = getSearchParam('secret') ?? getLocalStorageItem('secret', url?.username ?? '')
+    const protocol = getSearchParam('protocol') ?? hostname === '127.0.0.1' ? 'http:' : getLocalStorageItem('protocol', (url?.protocol ?? window.location.protocol))
 
     if (!hostname || !port) {
         throw new Error('can\'t get hostname or port')
@@ -140,7 +140,7 @@ export const getInstance = createAsyncSingleton(async () => {
     } = await getExternalControllerConfig()
 
     return axios.create({
-        baseURL: `${protocol}://${hostname}:${port}`,
+        baseURL: `${protocol}//${hostname}:${port}`,
         headers: secret ? { Authorization: `Bearer ${secret}` } : {}
     })
 })

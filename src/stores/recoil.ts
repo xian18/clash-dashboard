@@ -197,6 +197,9 @@ export function useProxy() {
             set(draft => { draft.global.now = selected })
         }
         set(draft => {
+            if (name === 'GLOBAL') {
+                draft.global.now = selected
+            }
             for (const group of draft.groups) {
                 if (group.name === name) {
                     group.now = selected
