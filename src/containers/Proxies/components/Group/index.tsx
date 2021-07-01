@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react'
-import { useRecoilValue } from 'recoil'
-import { useProxy, useConfig, proxyMapping } from '@stores'
-import { changeProxySelected, Group as IGroup, getConnections, closeConnection } from '@lib/request'
+import { useAtom } from 'jotai'
+import { useProxy, useConfig, proxyMapping, useClient } from '@stores'
+import { Group as IGroup } from '@lib/request'
 import { Tags, Tag } from '@components'
 import './style.scss'
 
@@ -11,16 +11,17 @@ interface GroupProps {
 
 export function Group (props: GroupProps) {
     const { markProxySelected } = useProxy()
-    const proxyMap = useRecoilValue(proxyMapping)
+    const [proxyMap] = useAtom(proxyMapping)
     const { data: Config } = useConfig()
+    const client = useClient()
     const { config } = props
 
     async function handleChangeProxySelected (name: string) {
-        await changeProxySelected(props.config.name, name)
+        await client.changeProxySelected(props.config.name, name)
         markProxySelected(props.config.name, name)
         if (Config.breakConnections) {
             const list: string[] = []
-            const snapshot = await getConnections()
+            const snapshot = await client.getConnections()
             for (const connection of snapshot.data.connections) {
                 if (connection.chains.includes(props.config.name)) {
                     list.push(connection.id)
@@ -28,7 +29,7 @@ export function Group (props: GroupProps) {
             }
 
             for (const id of list) {
-                closeConnection(id)
+                client.closeConnection(id)
             }
         }
     }
@@ -48,13 +49,13 @@ export function Group (props: GroupProps) {
     const canClick = config.type === 'Selector'
     return (
         <div className="proxy-group">
-            <div className="proxy-group-part">
-                <span className="proxy-group-name">{ config.name }</span>
-                <Tag className="proxy-group-type">{ config.type }</Tag>
+            <div className="w-full h-10 mt-4 flex items-center justify-between md:h-15 md:mt-0 md:w-auto">
+                <span className="overflow-hidden overflow-ellipsis whitespace-nowrap px-5 h-6 w-35 md:w-30">{ config.name }</span>
+                <Tag className="mr-5 md:mr-0">{ config.type }</Tag>
             </div>
-            <div className="proxy-group-tags-container">
+            <div className="py-2 md:py-4 flex-1">
                 <Tags
-                    className="proxy-group-tags"
+                    className="ml-5 md:ml-8"
                     data={config.all}
                     onClick={handleChangeProxySelected}
                     errSet={errSet}

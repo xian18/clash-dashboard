@@ -1,9 +1,9 @@
 import React, { useEffect, useMemo } from 'react'
 import classnames from 'classnames'
+import { useUpdateAtom } from 'jotai/utils'
 import { capitalize } from 'lodash-es'
-import { Header, Card, Switch, ButtonSelect, ButtonSelectOptions, Input, Icon } from '@components'
-import { useI18n, useClashXData, useAPIInfo, useGeneral, useIdentity, useVersion } from '@stores'
-import { getLogsStreamReader, updateConfig } from '@lib/request'
+import { Header, Card, Switch, ButtonSelect, ButtonSelectOptions, Input } from '@components'
+import { useI18n, useClashXData, useAPIInfo, useGeneral, useVersion, useClient, identityAtom } from '@stores'
 import { useObject } from '@lib/hook'
 import { jsBridge } from '@lib/jsBridge'
 import { Lang } from '@i18n'
@@ -15,10 +15,11 @@ export default function Settings() {
     const { premium } = useVersion()
     const { data: clashXData, update: fetchClashXData } = useClashXData()
     const { general, update: fetchGeneral } = useGeneral()
-    const { set: setIdentity } = useIdentity()
-    const { data: apiInfo } = useAPIInfo()
+    const setIdentity = useUpdateAtom(identityAtom)
+    const apiInfo = useAPIInfo()
     const { translation, setLang, lang } = useI18n()
     const { t } = translation('Settings')
+    const client = useClient()
     const [info, set] = useObject({
         socks5ProxyPort: 7891,
         httpProxyPort: 7890,
@@ -32,7 +33,7 @@ export default function Settings() {
     }, [general, set])
 
     async function handleProxyModeChange(mode: string) {
-        await updateConfig({ mode })
+        await client.updateConfig({ mode })
         await fetchGeneral()
     }
 
@@ -51,38 +52,34 @@ export default function Settings() {
     }
 
     async function handleHttpPortSave() {
-        await updateConfig({ port: info.httpProxyPort })
+        await client.updateConfig({ port: info.httpProxyPort })
         await fetchGeneral()
     }
 
     async function handleSocksPortSave() {
-        await updateConfig({ 'socks-port': info.socks5ProxyPort })
+        await client.updateConfig({ 'socks-port': info.socks5ProxyPort })
         await fetchGeneral()
     }
 
     async function handleMixedPortSave() {
-        await updateConfig({ 'mixed-port': info.mixedProxyPort })
+        await client.updateConfig({ 'mixed-port': info.mixedProxyPort })
         await fetchGeneral()
     }
 
     async function handleAllowLanChange(state: boolean) {
-        await updateConfig({ 'allow-lan': state })
+        await client.updateConfig({ 'allow-lan': state })
         await fetchGeneral()
     }
 
     async function handleLogLevelChange(logLevel: string) {
-        await updateConfig({ "log-level": logLevel })
+        await client.updateConfig({ "log-level": logLevel })
         await fetchGeneral()
-        let last = await getLogsStreamReader()
-        last.websocketConnection?.close()
-        last.websocketConnection = null
-        await getLogsStreamReader(true)
     }
 
     const {
         protocol: externalControllerProtocol,
         hostname: externalControllerHost,
-        port: externalControllerPort
+        port: externalControllerPort,
     } = apiInfo
 
     const { allowLan, mode, logLevel } = general
@@ -191,7 +188,7 @@ export default function Settings() {
                         <span
                             className={classnames({ 'modify-btn': !isClashX }, 'external-controller')}
                             onClick={() => !isClashX && setIdentity(false)}>
-                            {`${externalControllerProtocol}://${externalControllerHost}:${externalControllerPort}`}
+                            {`${externalControllerProtocol}//${externalControllerHost}:${externalControllerPort}`}
                         </span>
                     </div>
                     <div className="flex w-1/2 items-center justify-between px-8 py-3">

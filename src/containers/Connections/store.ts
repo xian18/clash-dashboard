@@ -1,12 +1,12 @@
-import { getLocalStorageItem, setLocalStorageItem } from '@lib/helper'
 import * as API from '@lib/request'
+import { useConfig } from '@stores'
 import { useState, useMemo, useRef, useCallback } from 'react'
 
 export type Connection = API.Connections & { completed?: boolean, uploadSpeed: number, downloadSpeed: number }
 
 class Store {
     protected connections = new Map<string, Connection>()
-    protected saveDisconnection = getLocalStorageItem("saveDisconnection", "false") === "true"
+    public saveDisconnection = false
 
     appendToSet(connections: API.Connections[]) {
         const mapping = connections.reduce(
@@ -51,7 +51,6 @@ class Store {
         } else {
             this.saveDisconnection = true
         }
-        setLocalStorageItem("saveDisconnection", String(this.saveDisconnection))
         return this.saveDisconnection
     }
 
@@ -64,7 +63,9 @@ export function useConnections() {
     const store = useMemo(() => new Store(), [])
     const shouldFlush = useRef(true)
     const [connections, setConnections] = useState<Connection[]>([])
-    const [save, setSave] = useState<boolean>((getLocalStorageItem("saveDisconnection", "false") === "true"))
+    const { data: config, set: setter } = useConfig()
+    const [save, setSave] = useState<boolean>(config.saveDisconnection)
+    store.saveDisconnection = config.saveDisconnection
 
     const feed = useCallback(function (connections: API.Connections[]) {
         store.appendToSet(connections)
@@ -79,12 +80,13 @@ export function useConnections() {
         const state = store.toggleSave()
         setSave(state)
 
+        setter("saveDisconnection", state)
         if (!state) {
             setConnections(store.getConnections())
         }
 
         shouldFlush.current = true
-    }, [store])
+    }, [store, setter])
 
     return { connections, feed, toggleSave, save }
 }

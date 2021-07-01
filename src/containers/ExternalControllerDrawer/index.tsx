@@ -1,14 +1,17 @@
 import React, { useEffect } from 'react'
+import { useAtom } from 'jotai'
+import { useUpdateAtom } from 'jotai/utils'
 import { useObject } from '@lib/hook'
 import { Modal, Input, Alert } from '@components'
-import { useI18n, useAPIInfo, useIdentity } from '@stores'
+import { useI18n, useAPIInfo, identityAtom } from '@stores'
+import { localStorageAtom } from '@stores/request'
 import './style.scss'
 
 export default function ExternalController() {
     const { translation } = useI18n()
     const { t } = translation('Settings')
-    const { data: info, update, fetch } = useAPIInfo()
-    const { identity, set: setIdentity } = useIdentity()
+    const { hostname, port, secret, protocol } = useAPIInfo()
+    const [identity, setIdentity] = useAtom(identityAtom)
     const [value, set] = useObject({
         protocol: '',
         hostname: '',
@@ -17,16 +20,14 @@ export default function ExternalController() {
     })
 
     useEffect(() => {
-        fetch()
-    }, [fetch])
+        set({ hostname, port, secret, protocol })
+    }, [hostname, port, secret, protocol, set])
 
-    useEffect(() => {
-        set({ protocol: info.protocol, hostname: info.hostname, port: info.port, secret: info.secret })
-    }, [info, set])
+    const setter = useUpdateAtom(localStorageAtom)
 
     function handleOk() {
-        const { protocol, hostname, port, secret } = value
-        update({ protocol, hostname, port, secret })
+        const { hostname, port, secret, protocol } = value
+        setter([{ hostname, port, secret, protocol }])
     }
 
     return (

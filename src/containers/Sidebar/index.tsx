@@ -1,17 +1,13 @@
 import * as React from 'react'
 import { NavLink } from 'react-router-dom'
 import classnames from 'classnames'
-import { useI18n, useVersion, useClashXData } from '@stores'
+import { useI18n, useVersion, useClashXData, useConnectionStreamReader } from '@stores'
 
-import './style.scss'
 import logo from '@assets/logo.png'
-import useSWR from 'swr'
-
-import { StreamReader } from '@lib/streamer'
+import './style.scss'
 import * as API from '@lib/request'
+import { formatTraffic, SideBarSpeed } from './store'
 import { useObject } from '@lib/hook'
-import { SideBarSpeed, formatTraffic } from './store'
-
 
 interface SidebarProps {
     routes: {
@@ -27,15 +23,9 @@ interface SidebarProps {
 export default function Sidebar(props: SidebarProps) {
     const { routes } = props
     const { translation } = useI18n()
-    const { version, premium, update } = useVersion()
+    const { version, premium } = useVersion()
     const { data } = useClashXData()
     const { t } = translation('SideBar')
-
-    // connections
-    const [connection, setConnection] = useObject({ uploadTotal: 0, downloadTotal: 0, uploadSpeed: 0, downloadSpeed: 0 })
-    const speedStore = React.useMemo(() => new SideBarSpeed(), [])
-
-    useSWR('version', update)
 
     const navlinks = routes.map(
         ({ path, name, exact, noMobile }) => (
@@ -45,10 +35,14 @@ export default function Sidebar(props: SidebarProps) {
         )
     )
 
-    const speed = React.useMemo(() => speedStore.getSpeed(), [connection, setConnection])
+    // connections
+    const [connection, setConnection] = useObject({ uploadTotal: 0, downloadTotal: 0, uploadSpeed: 0, downloadSpeed: 0 })
+    const speedStore = React.useMemo(() => new SideBarSpeed(), [])
+    const speed = React.useMemo(() => speedStore.getSpeed(), [speedStore, connection, setConnection])
+    const connStreamReader = useConnectionStreamReader()
 
     React.useLayoutEffect(() => {
-        let streamReader: StreamReader<API.Snapshot> | null = null
+
 
         function handleConnection(snapshots: API.Snapshot[]) {
             for (const snapshot of snapshots) {
@@ -57,18 +51,12 @@ export default function Sidebar(props: SidebarProps) {
             setConnection(speedStore.getAll())
         }
 
-        (async function () {
-            streamReader = await API.getConnectionStreamReader()
-            streamReader.subscribe('data', handleConnection)
-        }())
-
+        connStreamReader?.subscribe('data', handleConnection)
         return () => {
-            if (streamReader) {
-                streamReader.unsubscribe('data', handleConnection)
-            }
+            connStreamReader?.unsubscribe('data', handleConnection)
+            connStreamReader?.destory()
         }
-    }, [])
-
+    }, [connStreamReader, speedStore, setConnection])
 
     return (
         <div className="sidebar">
