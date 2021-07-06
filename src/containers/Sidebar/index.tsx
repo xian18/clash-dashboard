@@ -10,17 +10,15 @@ import { formatTraffic, SideBarSpeed } from './store'
 import { useObject } from '@lib/hook'
 
 interface SidebarProps {
-    routes: {
+    routes: Array<{
         path: string
         name: string
         noMobile?: boolean
         exact?: boolean
-    }[]
+    }>
 }
 
-
-
-export default function Sidebar(props: SidebarProps) {
+export default function Sidebar (props: SidebarProps) {
     const { routes } = props
     const { translation } = useI18n()
     const { version, premium } = useVersion()
@@ -32,7 +30,7 @@ export default function Sidebar(props: SidebarProps) {
             <li className={classnames('item', { 'no-mobile': noMobile })} key={name}>
                 <NavLink to={path} activeClassName="active" exact={!!exact}>{t(name)}</NavLink>
             </li>
-        )
+        ),
     )
 
     // connections
@@ -42,9 +40,7 @@ export default function Sidebar(props: SidebarProps) {
     const connStreamReader = useConnectionStreamReader()
 
     React.useLayoutEffect(() => {
-
-
-        function handleConnection(snapshots: API.Snapshot[]) {
+        function handleConnection (snapshots: API.Snapshot[]) {
             for (const snapshot of snapshots) {
                 speedStore.storeConnection(snapshot)
             }

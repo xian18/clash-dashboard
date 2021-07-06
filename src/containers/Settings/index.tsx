@@ -11,7 +11,7 @@ import './style.scss'
 
 const languageOptions: ButtonSelectOptions[] = [{ label: '中文', value: 'zh_CN' }, { label: 'English', value: 'en_US' }]
 
-export default function Settings() {
+export default function Settings () {
     const { premium } = useVersion()
     const { data: clashXData, update: fetchClashXData } = useClashXData()
     const { general, update: fetchGeneral } = useGeneral()
@@ -23,7 +23,7 @@ export default function Settings() {
     const [info, set] = useObject({
         socks5ProxyPort: 7891,
         httpProxyPort: 7890,
-        mixedProxyPort: 0
+        mixedProxyPort: 0,
     })
 
     useEffect(() => {
@@ -32,47 +32,47 @@ export default function Settings() {
         set('mixedProxyPort', general?.mixedPort ?? 0)
     }, [general, set])
 
-    async function handleProxyModeChange(mode: string) {
+    async function handleProxyModeChange (mode: string) {
         await client.updateConfig({ mode })
         await fetchGeneral()
     }
 
-    async function handleStartAtLoginChange(state: boolean) {
+    async function handleStartAtLoginChange (state: boolean) {
         await jsBridge?.setStartAtLogin(state)
-        fetchClashXData()
+        await fetchClashXData()
     }
 
-    async function handleSetSystemProxy(state: boolean) {
+    async function handleSetSystemProxy (state: boolean) {
         await jsBridge?.setSystemProxy(state)
-        fetchClashXData()
+        await fetchClashXData()
     }
 
-    function changeLanguage(language: Lang) {
+    function changeLanguage (language: Lang) {
         setLang(language)
     }
 
-    async function handleHttpPortSave() {
+    async function handleHttpPortSave () {
         await client.updateConfig({ port: info.httpProxyPort })
         await fetchGeneral()
     }
 
-    async function handleSocksPortSave() {
+    async function handleSocksPortSave () {
         await client.updateConfig({ 'socks-port': info.socks5ProxyPort })
         await fetchGeneral()
     }
 
-    async function handleMixedPortSave() {
+    async function handleMixedPortSave () {
         await client.updateConfig({ 'mixed-port': info.mixedProxyPort })
         await fetchGeneral()
     }
 
-    async function handleAllowLanChange(state: boolean) {
+    async function handleAllowLanChange (state: boolean) {
         await client.updateConfig({ 'allow-lan': state })
         await fetchGeneral()
     }
 
-    async function handleLogLevelChange(logLevel: string) {
-        await client.updateConfig({ "log-level": logLevel })
+    async function handleLogLevelChange (logLevel: string) {
+        await client.updateConfig({ 'log-level': logLevel })
         await fetchGeneral()
     }
 
@@ -92,8 +92,8 @@ export default function Settings() {
         const options = [
             { label: t('values.global'), value: 'Global' },
             { label: t('values.rules'), value: 'Rule' },
-            { label: t('values.direct'), value: 'Direct' }
-        ]
+            { label: t('values.direct'), value: 'Direct' },
+        ] as Array<{ label: string, value: string }>
         if (premium) {
             options.push({ label: t('values.script'), value: 'Script' })
         }

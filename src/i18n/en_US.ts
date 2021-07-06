@@ -7,7 +7,7 @@ const EN = {
         Settings: 'Setting',
         Connections: 'Connections',
         Version: 'Version',
-        Speed: 'Network Speed'
+        Speed: 'Network Speed',
     },
     Settings: {
         title: 'Settings',
@@ -24,7 +24,7 @@ const EN = {
             logLevel: 'Log Level',
             Speed: 'Speed',
             Upload: 'Upload Speed',
-            Download: 'Download Speed'
+            Download: 'Download Speed',
         },
         values: {
             cn: '中文',
@@ -37,7 +37,7 @@ const EN = {
             warning: 'Warn',
             error: 'Error',
             debug: 'Debug',
-            silent: 'Silent'
+            silent: 'Silent',
         },
         versionString: 'Current ClashX is the latest version：{{version}}',
         checkUpdate: 'Check Update',
@@ -47,17 +47,17 @@ const EN = {
             protocol: 'Protocol',
             host: 'Host',
             port: 'Port',
-            secret: 'Secret'
-        }
+            secret: 'Secret',
+        },
     },
     Logs: {
-        title: 'Logs'
+        title: 'Logs',
     },
     Rules: {
         title: 'Rules',
         providerTitle: 'Providers',
         providerUpdateTime: 'Last updated at',
-        ruleCount: 'Rule count'
+        ruleCount: 'Rule count',
     },
     Connections: {
         title: 'Connections',
@@ -65,14 +65,14 @@ const EN = {
         total: {
             text: 'total',
             upload: 'upload',
-            download: 'download'
+            download: 'download',
         },
         closeAll: {
             title: 'Warning',
-            content: 'This would close all connections'
+            content: 'This would close all connections',
         },
         filter: {
-            all: 'All'
+            all: 'All',
         },
         columns: {
             host: 'Host',
@@ -84,8 +84,27 @@ const EN = {
             speed: 'Speed',
             upload: 'Upload',
             download: 'Download',
-            sourceIP: 'Source IP'
-        }
+            sourceIP: 'Source IP',
+        },
+        info: {
+            title: 'Connection',
+            id: 'ID',
+            host: 'Host',
+            hostEmpty: 'Empty',
+            dstIP: 'IP',
+            dstIPEmpty: 'Empty',
+            srcIP: 'Source',
+            upload: 'Upload',
+            download: 'Download',
+            network: 'Network',
+            inbound: 'Inbound',
+            rule: 'Rule',
+            chains: 'Chains',
+            status: 'Status',
+            opening: 'Open',
+            closed: 'Closed',
+            closeConnection: 'Close',
+        },
     },
     Proxies: {
         title: 'Proxies',
@@ -102,7 +121,7 @@ const EN = {
             'obfs-host': 'Obfs-host',
             uuid: 'UUID',
             alterId: 'AlterId',
-            tls: 'TLS'
+            tls: 'TLS',
         },
         groupTitle: 'Policy Group',
         providerTitle: 'Providers',
@@ -110,12 +129,12 @@ const EN = {
         expandText: 'Expand',
         collapseText: 'Collapse',
         speedTestText: 'Speed Test',
-        breakConnectionsText: 'Close connections which include the group'
+        breakConnectionsText: 'Close connections which include the group',
     },
     Modal: {
         ok: 'Ok',
-        cancel: 'Cancel'
-    }
-}
+        cancel: 'Cancel',
+    },
+} as const
 
 export default EN

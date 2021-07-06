@@ -9,7 +9,7 @@ const CN = {
         Version: '版本',
         Speed: '网络速度',
         Upload: '上传速度',
-        Download: '下载速度'
+        Download: '下载速度',
     },
     Settings: {
         title: '设置',
@@ -23,7 +23,7 @@ const CN = {
             httpProxyPort: 'HTTP 代理端口',
             mixedProxyPort: '混合代理端口',
             externalController: '外部控制设置',
-            logLevel: '日志级别'
+            logLevel: '日志级别',
         },
         values: {
             cn: '中文',
@@ -36,7 +36,7 @@ const CN = {
             warning: '警告',
             error: '错误',
             debug: '调试',
-            silent:'安静'
+            silent: '安静',
         },
         versionString: '当前 ClashX 已是最新版本：{{version}}',
         checkUpdate: '检查更新',
@@ -46,17 +46,17 @@ const CN = {
             protocol: 'Protocol',
             host: 'Host',
             port: '端口',
-            secret: '密钥'
-        }
+            secret: '密钥',
+        },
     },
     Logs: {
-        title: '日志'
+        title: '日志',
     },
     Rules: {
         title: '规则',
         providerTitle: '规则集',
         providerUpdateTime: '最后更新于',
-        ruleCount: '规则条数'
+        ruleCount: '规则条数',
     },
     Connections: {
         title: '连接',
@@ -64,14 +64,14 @@ const CN = {
         total: {
             text: '总量',
             upload: '上传',
-            download: '下载'
+            download: '下载',
         },
         closeAll: {
             title: '警告',
-            content: '将会关闭所有连接'
+            content: '将会关闭所有连接',
         },
         filter: {
-            all: '全部'
+            all: '全部',
         },
         columns: {
             host: '域名',
@@ -83,8 +83,27 @@ const CN = {
             speed: '速率',
             upload: '上传',
             download: '下载',
-            sourceIP: '来源 IP'
-        }
+            sourceIP: '来源 IP',
+        },
+        info: {
+            title: '连接信息',
+            id: 'ID',
+            host: '域名',
+            hostEmpty: '空',
+            dstIP: 'IP',
+            dstIPEmpty: '空',
+            srcIP: '来源',
+            upload: '上传',
+            download: '下载',
+            network: '网络',
+            inbound: '入口',
+            rule: '规则',
+            chains: '代理',
+            status: '状态',
+            opening: '连接中',
+            closed: '已关闭',
+            closeConnection: '关闭连接',
+        },
     },
     Proxies: {
         title: '代理',
@@ -101,7 +120,7 @@ const CN = {
             'obfs-host': 'Obfs-host',
             uuid: 'UUID',
             alterId: 'AlterId',
-            tls: 'TLS'
+            tls: 'TLS',
         },
         groupTitle: '策略组',
         providerTitle: '代理集',
@@ -109,12 +128,12 @@ const CN = {
         expandText: '展开',
         collapseText: '收起',
         speedTestText: '测速',
-        breakConnectionsText: '切换时打断包含策略组的连接'
+        breakConnectionsText: '切换时打断包含策略组的连接',
     },
     Modal: {
         ok: '确 定',
-        cancel: '取 消'
-    }
-}
+        cancel: '取 消',
+    },
+} as const
 
 export default CN

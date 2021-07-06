@@ -5,7 +5,7 @@ import { Card, Header } from '@components'
 import { Log } from '@models/Log'
 import './style.scss'
 
-export default function Logs() {
+export default function Logs () {
     const listRef = useRef<HTMLUListElement>(null)
     const logsRef = useRef<Log[]>([])
     const [logs, setLogs] = useState<Log[]>([])
@@ -15,18 +15,18 @@ export default function Logs() {
 
     useLayoutEffect(() => {
         const ul = listRef.current
-        if (ul) {
+        if (ul != null) {
             ul.scrollTop = ul.scrollHeight
         }
     })
 
     useEffect(() => {
-        function handleLog(newLogs: Log[]) {
+        function handleLog (newLogs: Log[]) {
             logsRef.current = logsRef.current.slice().concat(newLogs.map(d => ({ ...d, time: new Date() })))
             setLogs(logsRef.current)
         }
 
-        if (logsStreamReader) {
+        if (logsStreamReader != null) {
             logsStreamReader.subscribe('data', handleLog)
             logsRef.current = logsStreamReader.buffer()
             setLogs(logsRef.current)
@@ -47,7 +47,7 @@ export default function Logs() {
                                     <span className="mr-4 text-gray-400 text-opacity-90">{dayjs(log.time).format('YYYY-MM-DD HH:mm:ss')}</span>
                                     <span>[{log.type}] {log.payload}</span>
                                 </li>
-                            )
+                            ),
                         )
                     }
                 </ul>

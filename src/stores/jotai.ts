@@ -7,6 +7,7 @@ import { useCallback, useEffect, useMemo } from 'react'
 import { get } from 'lodash-es'
 import useSWR from 'swr'
 import produce from 'immer'
+import { Get } from 'type-fest'
 
 import { Language, locales, Lang, getDefaultLanguage } from '@i18n'
 import { useWarpImmerSetter, WritableDraft } from '@lib/jotai'
@@ -14,27 +15,27 @@ import * as API from '@lib/request'
 import * as Models from '@models'
 import { partition } from '@lib/helper'
 import { isClashX, jsBridge } from '@lib/jsBridge'
-import { useAPIInfo, useClient } from './request'
 import { StreamReader } from '@lib/streamer'
 import { Log } from '@models/Log'
 import { Snapshot } from '@lib/request'
+import { useAPIInfo, useClient } from './request'
 
 export const identityAtom = atom(true)
 
 export const languageAtom = atomWithStorage<Lang | undefined>('language', undefined)
 
-export function useI18n() {
+export function useI18n () {
     const [defaultLang, setLang] = useAtom(languageAtom)
     const lang = useMemo(() => defaultLang ?? getDefaultLanguage(), [defaultLang])
 
     const translation = useCallback(
-        function (namespace: keyof typeof Language['en_US']) {
-            function t(path: string) {
-                return get(Language[lang][namespace], path) as string
+        function <Namespace extends keyof typeof Language['en_US']>(namespace: Namespace) {
+            function t<Path extends string> (path: Path): Get<typeof Language['en_US'][Namespace], Path> {
+                return get(Language[lang][namespace], path)
             }
             return { t }
         },
-        [lang]
+        [lang],
     )
 
     return { lang, locales, setLang, translation }
@@ -42,10 +43,10 @@ export function useI18n() {
 
 export const version = atom({
     version: '',
-    premium: false
+    premium: false,
 })
 
-export function useVersion() {
+export function useVersion () {
     const [data, set] = useAtom(version)
     const client = useClient()
     const setIdentity = useUpdateAtom(identityAtom)
@@ -57,14 +58,14 @@ export function useVersion() {
         set(
             result.isErr()
                 ? { version: '', premium: false }
-                : { version: result.value.data.version, premium: !!result.value.data.premium }
+                : { version: result.value.data.version, premium: !!result.value.data.premium },
         )
     })
 
     return data
 }
 
-export function useRuleProviders() {
+export function useRuleProviders () {
     const [{ premium }] = useAtom(version)
     const client = useClient()
 
@@ -84,10 +85,10 @@ export function useRuleProviders() {
 
 export const configAtom = atomWithStorage('profile', {
     breakConnections: false,
-    saveDisconnection: false
+    saveDisconnection: false,
 })
 
-export function useConfig() {
+export function useConfig () {
     const [data, set] = useAtom(configAtom)
 
     const setter = useCallback((f: WritableDraft<typeof data>) => {
@@ -99,7 +100,7 @@ export function useConfig() {
 
 export const proxyProvider = atom([] as API.Provider[])
 
-export function useProxyProviders() {
+export function useProxyProviders () {
     const [providers, set] = useAtom(proxyProvider)
     const client = useClient()
 
@@ -116,7 +117,7 @@ export function useProxyProviders() {
     return { providers, update: mutate }
 }
 
-export function useGeneral() {
+export function useGeneral () {
     const client = useClient()
 
     const { data, mutate } = useSWR(['/config', client], async () => {
@@ -129,7 +130,7 @@ export function useGeneral() {
             redirPort: data['redir-port'],
             mode: data.mode.toLowerCase() as Models.Data['general']['mode'],
             logLevel: data['log-level'],
-            allowLan: data['allow-lan']
+            allowLan: data['allow-lan'],
         } as Models.Data['general']
     })
 
@@ -144,11 +145,11 @@ export const proxies = atomWithImmer({
         type: 'Selector',
         now: '',
         history: [],
-        all: []
-    } as API.Group
+        all: [],
+    } as API.Group,
 })
 
-export function useProxy() {
+export function useProxy () {
     const [allProxy, rawSet] = useAtom(proxies)
     const set = useWarpImmerSetter(rawSet)
     const client = useClient()
@@ -188,7 +189,7 @@ export function useProxy() {
         global: allProxy.global,
         update: mutate,
         markProxySelected,
-        set
+        set,
     }
 }
 
@@ -197,7 +198,7 @@ export const proxyMapping = atom((get) => {
     const providers = get(proxyProvider)
     const proxyMap = new Map<string, API.Proxy>()
     for (const p of ps.proxies) {
-        proxyMap.set(p.name, p as API.Proxy)
+        proxyMap.set(p.name, p)
     }
 
     for (const provider of providers) {
@@ -209,13 +210,13 @@ export const proxyMapping = atom((get) => {
     return proxyMap
 })
 
-export function useClashXData() {
+export function useClashXData () {
     const { data, mutate } = useSWR('/clashx', async () => {
         if (!isClashX()) {
             return {
                 isClashX: false,
                 startAtLogin: false,
-                systemProxy: false
+                systemProxy: false,
             }
         }
 
@@ -230,12 +231,12 @@ export function useClashXData() {
 
 export const rules = atomWithImmer([] as API.Rule[])
 
-export function useRule() {
+export function useRule () {
     const [data, rawSet] = useAtom(rules)
     const set = useWarpImmerSetter(rawSet)
     const client = useClient()
 
-    async function update() {
+    async function update () {
         const resp = await client.getRules()
         set(resp.data.rules)
     }
@@ -245,10 +246,10 @@ export function useRule() {
 
 const logsAtom = atom({
     key: '',
-    instance: null as StreamReader<Log> | null
+    instance: null as StreamReader<Log> | null,
 })
 
-export function useLogsStreamReader() {
+export function useLogsStreamReader () {
     const apiInfo = useAPIInfo()
     const { general } = useGeneral()
     const version = useVersion()
@@ -270,14 +271,14 @@ export function useLogsStreamReader() {
     const instance = new StreamReader<Log>({ url: logUrl, bufferLength: 200, token: apiInfo.secret, useWebsocket })
     setItem({ key, instance })
 
-    if (oldInstance) {
+    if (oldInstance != null) {
         oldInstance.destory()
     }
 
     return instance
 }
 
-export function useConnectionStreamReader() {
+export function useConnectionStreamReader () {
     const apiInfo = useAPIInfo()
     const version = useVersion()
 
@@ -286,6 +287,6 @@ export function useConnectionStreamReader() {
     const url = `${apiInfo.protocol}//${apiInfo.hostname}:${apiInfo.port}/connections`
     return useMemo(
         () => version.version ? new StreamReader<Snapshot>({ url, bufferLength: 200, token: apiInfo.secret, useWebsocket }) : null,
-        [apiInfo.secret, url, useWebsocket, version.version]
+        [apiInfo.secret, url, useWebsocket, version.version],
     )
 }

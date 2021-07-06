@@ -7,7 +7,7 @@ import { useI18n, useAPIInfo, identityAtom } from '@stores'
 import { localStorageAtom } from '@stores/request'
 import './style.scss'
 
-export default function ExternalController() {
+export default function ExternalController () {
     const { translation } = useI18n()
     const { t } = translation('Settings')
     const { hostname, port, secret, protocol } = useAPIInfo()
@@ -16,7 +16,7 @@ export default function ExternalController() {
         protocol: '',
         hostname: '',
         port: '',
-        secret: ''
+        secret: '',
     })
 
     useEffect(() => {
@@ -25,7 +25,7 @@ export default function ExternalController() {
 
     const setter = useUpdateAtom(localStorageAtom)
 
-    function handleOk() {
+    function handleOk () {
         const { hostname, port, secret, protocol } = value
         setter([{ hostname, port, secret, protocol }])
     }
